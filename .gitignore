@@ -1,0 +1,39 @@
+# Ignore all CSV files
+*.csv
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+
+# Compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Config and secrets
+.env
+*.env
+config.json
+
+# IDE files
+.idea/
+.vscode/
+
+# Log files
+*.log
+
+# Test coverage
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/

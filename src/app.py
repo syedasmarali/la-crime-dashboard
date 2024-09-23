@@ -27,7 +27,7 @@ df = load_data()
 df = preprocess_data(df)
 
 # --- Date analyzing logic ---
-st.sidebar.header("Analyze Data With Date")
+st.sidebar.header("Filters")
 
 # Convert 'Date_occured' to datetime
 df['Date_occured'] = pd.to_datetime(df['Date_occured'], format='%d.%m.%Y', errors='coerce')
@@ -43,6 +43,14 @@ end_date = st.sidebar.date_input("End Date", value=max_date, min_value=min_date,
 # Filter data based on the selected date
 filtered_data = df[(df['Date_occured'] >= pd.to_datetime(start_date)) &
                    (df['Date_occured'] <= pd.to_datetime(end_date))]
+
+# --- Crime category analyzing logic ---
+# Sidebar for selecting Crime_Code
+crime_codes = filtered_data['Crime_Code'].unique()
+selected_crime_codes = st.sidebar.multiselect('Select Crime Type', crime_codes, default=crime_codes)
+
+# Filter DataFrame for Crime_Code (will be used for charts that depend on Crime_Code)
+crime_code_filtered_df = filtered_data[filtered_data['Crime_Code'].isin(selected_crime_codes)]
 
 # --- Map of crimes ---
 st.markdown("<h3 style='text-align: center;'>Crime Map</h1>",
@@ -89,7 +97,7 @@ with col1:
                 unsafe_allow_html=True)
 
     # Count area-wise crimes
-    area_crime_counts = filtered_data['Area'].value_counts().reset_index()
+    area_crime_counts = crime_code_filtered_df['Area'].value_counts().reset_index()
     area_crime_counts.columns = ['Area', 'Crime Count']
 
     # Treemap for area-wise crime distribution
@@ -104,7 +112,7 @@ with col2:
                 unsafe_allow_html=True)
 
     # Premis-wise crimes
-    premis_crime_counts = filtered_data['Premis'].value_counts().reset_index()
+    premis_crime_counts = crime_code_filtered_df['Premis'].value_counts().reset_index()
     premis_crime_counts.columns = ['Premis', 'Crime Count']
 
     # Treemap for area-wise crime distribution
@@ -243,7 +251,7 @@ with col2:
 
 # --- Bubble chart ---
 # Create a count of incidents by Premise and Crime Type
-bubble_data = filtered_data.groupby(['Premis', 'Crime_Code']).size().reset_index(name='Incident Count')
+bubble_data = crime_code_filtered_df.groupby(['Premis', 'Crime_Code']).size().reset_index(name='Incident Count')
 
 # Create a bubble chart
 st.markdown("<h3 style='text-align: center;'>Crime Incidents by Premises and Crime Type</h3>", unsafe_allow_html=True)
@@ -266,7 +274,7 @@ st.plotly_chart(fig_bubble)
 # --- Violin plot ---
 # Create a violin plot for Victim Age vs. Crime Type
 st.markdown("<h3 style='text-align: center;'>Victim Age Distribution by Crime Type</h3>", unsafe_allow_html=True)
-fig_violin = px.violin(filtered_data,
+fig_violin = px.violin(crime_code_filtered_df,
                         y='Victim_age',
                         x='Crime_Code',
                         box=True,  # Show box plot inside the violin

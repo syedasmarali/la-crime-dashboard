@@ -361,5 +361,9 @@ fig_violin.update_layout(height=1000, width=2000)
 # Show the violin plot in Streamlit
 st.plotly_chart(fig_violin)
 
-# Print the dataset
-#st.dataframe(df)
+# Add a divider
+st.divider()
+
+# Display the dataframe
+st.markdown("<h3 style='text-align: center;'>Original Data After Sampling</h3>", unsafe_allow_html=True)
+st.dataframe(df)

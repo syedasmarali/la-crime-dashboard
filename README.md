@@ -34,5 +34,13 @@ This project is an interactive **Streamlit** dashboard that provides insightful 
   pip install -r requirements.txt
 
 - Setup data Directory and Add the CSV File:
+  - Create a data directory in the root folder of the project:
+    ```bash
+    mkdir data
+  - Dpownload the LAPD Crime data from kaggle and place the downloaded CSV file inside the data directory.
+
+- Run the streamlit app:
   ```bash
-  mkdir data
+  streamlit run src/app.py
+
+  Now, you can view and interact with the LA Crime Data dashboard in your web browser!

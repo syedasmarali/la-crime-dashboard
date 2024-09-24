@@ -30,7 +30,9 @@ This project is an interactive **Streamlit** dashboard that provides insightful 
     Source .venv/bin/activate
 
 - Install the required packages:
-```bash
-pip install -r requirements.txt
+  ```bash
+  pip install -r requirements.txt
 
 - Setup data Directory and Add the CSV File:
+  ```bash
+  mkdir data

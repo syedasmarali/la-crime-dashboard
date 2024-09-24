@@ -57,3 +57,21 @@ def preprocess_data(df):
 
     # Return df
     return df
+
+def filter_dataframe(df, col_filters=None, date_range=None, date_col=None):
+    # Copying df
+    filtered_df = df.copy()
+
+    # Applying col filters
+    if col_filters:
+        for col, values in col_filters.items():
+            filtered_df = filtered_df[filtered_df[col].isin(values)]
+
+    # Apply date range filters if provided
+    if date_range:
+        start_date, end_date = date_range
+        filtered_df = filtered_df[(filtered_df[date_col] >= pd.to_datetime(start_date)) &
+                                  (filtered_df[date_col] <= pd.to_datetime(end_date))]
+
+    # Return filtered df
+    return filtered_df

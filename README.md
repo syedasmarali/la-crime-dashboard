@@ -11,27 +11,26 @@ This project is an interactive **Streamlit** dashboard that provides insightful 
 
 ## Getting Started:
 
-### 1. Clone the Repository:
-To get started, clone the repository to your local machine:
-```bash
-git clone https://github.com/syedasmarali/la-crime-dashboard.git
-cd la-crime-dashboard
+- Clone the Repository:
+  To get started, clone the repository to your local machine:
+  ```bash
+  git clone https://github.com/syedasmarali/la-crime-dashboard.git
+  cd la-crime-dashboard
 
-### 2. Create a Virtual Environment:
-To get started, clone the repository to your local machine:
-```bash
-python -m venv .venv
+- Create a Virtual Environment:
+  ```bash
+  python -m venv .venv
 
-### 3. Activate the virtual environment:
-- On Windows:
-```bash
-python -m venv .venv
-- On macOS/Linux:
-```bash
-Source .venv/bin/activate
+- Activate the virtual environment:
+  - On Windows:
+    ```bash
+    python -m venv .venv
+  - On macOS/Linux:
+    ```bash
+    Source .venv/bin/activate
 
-### 4. Install the required packages:
+- Install the required packages:
 ```bash
 pip install -r requirements.txt
 
-### 5. Setup data Directory and Add the CSV File:
+- Setup data Directory and Add the CSV File:

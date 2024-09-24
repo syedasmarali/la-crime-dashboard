@@ -138,72 +138,23 @@ with col2:
     # Show the line chart in Streamlit
     st.plotly_chart(fig_line)
 
-# --- Dumbell plot for comparison ---
-st.markdown("<h3 style='text-align: center;'>No. of Crimes in a Defined Period</h3>", unsafe_allow_html=True)
+# --- Bar plot for crime count ---
+st.markdown("<h3 style='text-align: center;'>Crime Count</h3>", unsafe_allow_html=True)
 
-# Convert start_date and end_date to pandas datetime for comparison
-start_date_dumbell = pd.to_datetime(start_date)
-end_date_dumbell = pd.to_datetime(end_date)
-
-# Filter the DataFrame based on selected dates
-filtered_df = df_date_crime_gender[(df_date_crime_gender['Date_occured'] >= start_date_dumbell) & (df_date_crime_gender['Date_occured'] <= end_date_dumbell)]
-
-# Count the occurrences of each crime code for the selected date range
+# Count occurrences of each crime code
 crime_counts = df_date_crime_gender['Crime_Code'].value_counts().reset_index()
 crime_counts.columns = ['Crime_Code', 'Count']
 
-# Assuming you want to compare two different periods, you can define another date range
-# You might want to create another date input for a different range or set a previous date range
-previous_start_date = start_date_dumbell - pd.DateOffset(years=1)
-previous_end_date = end_date_dumbell - pd.DateOffset(years=1)
+# Sort the crime counts in descending order
+crime_counts = crime_counts.sort_values(by='Count', ascending=True)
 
-# Filter the DataFrame for the previous period
-previous_filtered_df = df_date_crime_gender[(df_date_crime_gender['Date_occured'] >= previous_start_date) & (df_date_crime_gender['Date_occured'] <= previous_end_date)]
-
-# Count the occurrences of each crime code for the previous date range
-previous_crime_counts = previous_filtered_df['Crime_Code'].value_counts().reset_index()
-previous_crime_counts.columns = ['Crime_Code', 'Previous_Count']
-
-# Merge the two counts into a single DataFrame
-merged_counts = pd.merge(crime_counts, previous_crime_counts, on='Crime_Code', how='outer').fillna(0)
-
-# Create the dumbbell plot
-fig = go.Figure()
-
-# Add lines connecting the two points for each crime code
-for index, row in merged_counts.iterrows():
-    fig.add_trace(go.Scatter(
-        x=[row['Previous_Count'], row['Count']],
-        y=[row['Crime_Code'], row['Crime_Code']],
-        mode='lines',
-        line=dict(color='grey'),
-        showlegend=False
-    ))
-
-# Add markers for the previous counts with the selected previous date
-fig.add_trace(go.Scatter(
-    x=merged_counts['Previous_Count'],
-    y=merged_counts['Crime_Code'],
-    mode='markers',
-    name=start_date.strftime('%d.%m-%y'),
-    marker=dict(color='green', size=10)
-))
-
-# Add markers for the current counts with the selected current date
-fig.add_trace(go.Scatter(
-    x=merged_counts['Count'],
-    y=merged_counts['Crime_Code'],
-    mode='markers',
-    name=end_date.strftime('%d.%m.%y'),
-    marker=dict(color='blue', size=10)
-))
-
-# Update layout
-fig.update_layout(
-    xaxis_title='Count',
-    yaxis_title='Crime Code',
-    height=800,
-    legend_itemclick=False
+# Create a horizontal bar plot
+fig = px.bar(
+    crime_counts,
+    x='Count',
+    y='Crime_Code',
+    orientation='h',
+    labels={'Count': 'Number of Crimes', 'Crime_Code': 'Crime Code'},
 )
 
 # Display the plot in Streamlit

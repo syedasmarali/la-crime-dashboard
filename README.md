@@ -43,4 +43,4 @@ This project is an interactive **Streamlit** dashboard that provides insightful 
   ```bash
   streamlit run src/app.py
 
-  Now, you can view and interact with the LA Crime Data dashboard in your web browser!
+Now, you can view and interact with the LA Crime Data dashboard in your web browser!

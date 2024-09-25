@@ -121,22 +121,17 @@ with col2:
     crime_trends_by_type = df_date_crime_gender.groupby(['YearMonth', 'Crime_Code']).size().reset_index(name='Crime Count')
 
     # Convert 'YearMonth' to string format for Plotly
-    crime_trends_by_type['YearMonth'] = crime_trends_by_type['YearMonth'].astype(str)
+    crime_trends_by_type['YearMonth'] = crime_trends_by_type['YearMonth'].dt.to_timestamp()
 
-    # Create a line chart for crime trends over time by crime type
+    # Creating plot
     st.markdown("<h3 style='text-align: center;'>Crime Trends Over Time</h3>", unsafe_allow_html=True)
-    fig_line = px.line(crime_trends_by_type,
-                       x='YearMonth',
-                       y='Crime Count',
-                       color='Crime_Code',  # Different line for each Crime_Code
-                       markers=True,
-                       template='plotly')
+    fig = px.scatter(crime_trends_by_type, x="YearMonth", y="Crime Count", trendline="ols", color='Crime_Code')
 
     # Set figure size for better visibility
-    fig_line.update_layout(height=600, width=1200, xaxis_title="Time (Monthly)", yaxis_title="Number of Crimes")
+    fig.update_layout(height=600, width=1200, xaxis_title="Time (Monthly)", yaxis_title="Number of Crimes")
 
     # Show the line chart in Streamlit
-    st.plotly_chart(fig_line)
+    st.plotly_chart(fig)
 
 # 2 Columns
 col1, col2 = st.columns(2)

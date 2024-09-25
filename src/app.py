@@ -76,7 +76,7 @@ col1, col2 = st.columns(2)
 
 # --- Map of crimes ---
 with col1:
-    st.markdown("<h3 style='text-align: center;'>Crime Map</h1>",
+    st.markdown("<h3 style='text-align: center;'>Crime Map</h3>",
                     unsafe_allow_html=True)
 
     # Count the number of crimes for each location
@@ -184,8 +184,71 @@ with col2:
     else:
         st.write("Please adjust your filters.")
 
+# --- Crimes disparity by gender
+st.markdown("<h3 style='text-align: center;'>Crime Disparity by Gender</h1>",
+            unsafe_allow_html=True)
+
+# Create an appropriate df
+df_crime_disparity = df_date_crime_gender.groupby(['Crime_Code', 'Victim_sex']).size().reset_index(name='Crime Count')
+
+# Pivot the table so that each gender becomes a separate column
+df_pivot = df_crime_disparity.pivot_table(index='Crime_Code', columns='Victim_sex', values='Crime Count',
+                                          fill_value=0)
+
+# Ensure 'Crime_Code' is a column (if it's still in the index)
+df_pivot = df_pivot.reset_index()
+
+# Initiate the figure
+fig = go.Figure()
+
+# Add male trace
+if 'M' in df_pivot.columns and df_pivot['M'].notna().any() and (df_pivot['M'] != 0).any():
+    fig.add_trace(go.Scatter(
+        x=df_pivot['M'],
+        y=df_pivot['Crime_Code'],
+        marker=dict(color="blue", size=12),
+        mode="markers",
+        name="Male",
+    ))
+
+# Add female trace
+if 'F' in df_pivot.columns and df_pivot['F'].notna().any() and (df_pivot['F'] != 0).any():
+    fig.add_trace(go.Scatter(
+        x=df_pivot['F'],
+        y=df_pivot['Crime_Code'],
+        marker=dict(color="pink", size=12),
+        mode="markers",
+        name="Female",
+    ))
+
+# Add H trace
+if 'H' in df_pivot.columns and df_pivot['H'].notna().any() and (df_pivot['H'] != 0).any():
+    fig.add_trace(go.Scatter(
+        x=df_pivot['H'],
+        y=df_pivot['Crime_Code'],
+        marker=dict(color="black", size=12),
+        mode="markers",
+        name="H",
+    ))
+
+# Add X trace
+if 'X' in df_pivot.columns and df_pivot['X'].notna().any() and (df_pivot['X'] != 0).any():
+    fig.add_trace(go.Scatter(
+        x=df_pivot['X'],
+        y=df_pivot['Crime_Code'],
+        marker=dict(color="yellow", size=12),
+        mode="markers",
+        name="Not Known",
+    ))
+
+# Update figure layout
+fig.update_layout(xaxis_title="No. of Crimes", yaxis_title="Crime Type", height=800, width=2000)
+
+# Plot the figure
+st.plotly_chart(fig)
+
 # 2 Columns
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 # --- Area wise crime ---
 with col1:
@@ -202,72 +265,8 @@ with col1:
                      values='Crime Count',)
     st.plotly_chart(fig)
 
-# --- Crimes disparity by gender
-with col2:
-    st.markdown("<h3 style='text-align: center;'>Crime Disparity by Gender</h1>",
-                unsafe_allow_html=True)
-
-    # Create an appropriate df
-    df_crime_disparity = df_date_crime_gender.groupby(['Crime_Code', 'Victim_sex']).size().reset_index(name='Crime Count')
-
-    # Pivot the table so that each gender becomes a separate column
-    df_pivot = df_crime_disparity.pivot_table(index='Crime_Code', columns='Victim_sex', values='Crime Count',
-                                              fill_value=0)
-
-    # Ensure 'Crime_Code' is a column (if it's still in the index)
-    df_pivot = df_pivot.reset_index()
-
-    # Initiate the figure
-    fig = go.Figure()
-
-    # Add male trace
-    if 'M' in df_pivot.columns and df_pivot['M'].notna().any() and (df_pivot['M'] != 0).any():
-        fig.add_trace(go.Scatter(
-            x=df_pivot['M'],
-            y=df_pivot['Crime_Code'],
-            marker=dict(color="blue", size=12),
-            mode="markers",
-            name="Male",
-        ))
-
-    # Add female trace
-    if 'F' in df_pivot.columns and df_pivot['F'].notna().any() and (df_pivot['F'] != 0).any():
-        fig.add_trace(go.Scatter(
-            x=df_pivot['F'],
-            y=df_pivot['Crime_Code'],
-            marker=dict(color="pink", size=12),
-            mode="markers",
-            name="Female",
-        ))
-
-    # Add H trace
-    if 'H' in df_pivot.columns and df_pivot['H'].notna().any() and (df_pivot['H'] != 0).any():
-        fig.add_trace(go.Scatter(
-            x=df_pivot['H'],
-            y=df_pivot['Crime_Code'],
-            marker=dict(color="black", size=12),
-            mode="markers",
-            name="H",
-        ))
-
-    # Add X trace
-    if 'X' in df_pivot.columns and df_pivot['X'].notna().any() and (df_pivot['X'] != 0).any():
-        fig.add_trace(go.Scatter(
-            x=df_pivot['X'],
-            y=df_pivot['Crime_Code'],
-            marker=dict(color="yellow", size=12),
-            mode="markers",
-            name="Not Known",
-        ))
-
-    # Update figure layout
-    fig.update_layout(xaxis_title="No. of Crimes", yaxis_title="Crime Type")
-
-    # Plot the figure
-    st.plotly_chart(fig)
-
 # --- Premise wise crime distribution
-with col3:
+with col2:
     st.markdown("<h3 style='text-align: center;'>Premise-wise Crime Distribution</h1>",
                 unsafe_allow_html=True)
 

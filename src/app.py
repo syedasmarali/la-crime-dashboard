@@ -124,7 +124,7 @@ with col2:
     crime_trends_by_type['YearMonth'] = crime_trends_by_type['YearMonth'].astype(str)
 
     # Create a line chart for crime trends over time by crime type
-    st.markdown("<h3 style='text-align: center;'>Crime Trends Over Time by Crime Type</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>Crime Trends Over Time</h3>", unsafe_allow_html=True)
     fig_line = px.line(crime_trends_by_type,
                        x='YearMonth',
                        y='Crime Count',
@@ -138,27 +138,56 @@ with col2:
     # Show the line chart in Streamlit
     st.plotly_chart(fig_line)
 
+# 2 Columns
+col1, col2 = st.columns(2)
+
 # --- Bar plot for crime count ---
-st.markdown("<h3 style='text-align: center;'>Crime Count</h3>", unsafe_allow_html=True)
+with col1:
+    st.markdown("<h3 style='text-align: center;'>Crime Count</h3>", unsafe_allow_html=True)
 
-# Count occurrences of each crime code
-crime_counts = df_date_crime_gender['Crime_Code'].value_counts().reset_index()
-crime_counts.columns = ['Crime_Code', 'Count']
+    # Count occurrences of each crime code
+    crime_counts = df_date_crime_gender['Crime_Code'].value_counts().reset_index()
+    crime_counts.columns = ['Crime_Code', 'Count']
 
-# Sort the crime counts in descending order
-crime_counts = crime_counts.sort_values(by='Count', ascending=True)
+    # Sort the crime counts in descending order
+    crime_counts = crime_counts.sort_values(by='Count', ascending=True)
 
-# Create a horizontal bar plot
-fig = px.bar(
-    crime_counts,
-    x='Count',
-    y='Crime_Code',
-    orientation='h',
-    labels={'Count': 'Number of Crimes', 'Crime_Code': 'Crime Code'},
-)
+    # Create a horizontal bar plot
+    fig = px.bar(
+        crime_counts,
+        x='Count',
+        y='Crime_Code',
+        orientation='h',
+        labels={'Count': 'Number of Crimes', 'Crime_Code': 'Crime Code'},
+    )
 
-# Display the plot in Streamlit
-st.plotly_chart(fig)
+    # Display the plot in Streamlit
+    st.plotly_chart(fig)
+
+# --- Top 5 crimes hierarchical chart ---
+with col2:
+    st.markdown("<h3 style='text-align: center;'>Top 5 Crimes</h3>", unsafe_allow_html=True)
+
+    # Extracting year from the filtered df
+    df_date_crime_gender['Year'] = df_date_crime_gender['Date_occured'].dt.year.astype(str)
+
+    # Getting crimes year wise
+    top_crimes = (df_date_crime_gender.groupby(['Year', 'Crime_Code', 'Victim_sex'])
+                    .size()
+                    .reset_index(name='Crime Count')
+                    .sort_values(['Year', 'Crime Count'], ascending=[True, False]))
+
+    # Getting top 5 crimes
+    top_5_crimes = top_crimes.groupby(['Year', 'Victim_sex']).head(5)
+
+    # Plotting the chart
+    if not top_5_crimes.empty:
+        fig = px.icicle(top_5_crimes, path=[px.Constant("All Crimes"), 'Year', 'Crime_Code', 'Victim_sex'],
+                        values='Crime Count', color='Crime Count', color_continuous_scale='YlOrRd')
+        fig.update_traces(texttemplate='%{label}<br>%{value}', textinfo='label+text+value')
+        st.plotly_chart(fig)
+    else:
+        st.write("Please adjust your filters.")
 
 # 2 Columns
 col1, col2 = st.columns(2)
